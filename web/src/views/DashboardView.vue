@@ -10,12 +10,13 @@ async function handleLogout() {
 </script>
 
 <template>
-  <main>
-    <h1>Inventory Dashboard</h1>
+  <div class="p-8">
+    <h1 class="text-3xl font-bold text-blue-600">
+      Tailwind CSS is working!
+    </h1>
 
-    <p>Welcome, {{ auth.user?.name }}</p>
-    <p>{{ auth.user?.email }}</p>
-
-    <button @click="handleLogout">Logout</button>
-  </main>
+    <p class="mt-2 text-slate-500">
+      ERP frontend is ready.
+    </p>
+  </div>
 </template>

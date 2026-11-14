@@ -10,6 +10,11 @@ import (
 type Config struct {
     AppPort       string
     LaravelAPIURL string
+    DBHost     string
+    DBPort     string
+    DBUser     string
+    DBPassword string
+    DBName     string
 }
 
 func LoadConfig() Config {
@@ -22,6 +27,11 @@ func LoadConfig() Config {
     return Config{
         AppPort:       getEnv("APP_PORT", "8080"),
         LaravelAPIURL: getEnv("LARAVEL_API_URL", "http://127.0.0.1:8000"),
+        DBHost:     getEnv("DB_HOST", "127.0.0.1"),
+        DBPort:     getEnv("DB_PORT", "3306"),
+        DBUser:     getEnv("DB_USER", "root"),
+        DBPassword: getEnv("DB_PASSWORD", ""),
+        DBName:     getEnv("DB_NAME", ""),
     }
 }
 
