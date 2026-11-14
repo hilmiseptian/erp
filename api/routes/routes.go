@@ -29,6 +29,18 @@ func SetupRoutes(router *gin.Engine, cfg config.Config, db *sql.DB) {
 	api.Use(middleware.AuthMiddleware(cfg.LaravelAPIURL))
 
 	api.GET("/me", handlers.Me)
+	itemRepository := repositories.NewItemRepository(db)
+	itemService := services.NewItemService(itemRepository)
+	itemHandler := handlers.NewItemHandler(itemService)
+	items := api.Group("/items")
+	{
+		items.GET("", itemHandler.List)
+		items.GET("/categories", itemHandler.Categories)
+		items.GET("/:id", itemHandler.Get)
+		items.POST("", itemHandler.Create)
+		items.PUT("/:id", itemHandler.Update)
+		items.PATCH("/:id/status", itemHandler.SetActive)
+	}
 
 	// Supplier routes
 	suppliers := api.Group("/suppliers")

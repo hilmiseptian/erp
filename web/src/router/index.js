@@ -6,6 +6,7 @@ import LoginView from '@/views/LoginView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import SupplierListView from '@/views/suppliers/SupplierListView.vue'
 import MainLayout from '@/components/layout/MainLayout.vue'
+import ItemListView from '@/views/items/ItemListView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -37,6 +38,12 @@ const router = createRouter({
           meta: {
             title: 'Dashboard',
           },
+        },
+        {
+          path: 'items',
+          name: 'items',
+          component: ItemListView,
+          meta: { title: 'Master Item' },
         },
         {
           path: 'suppliers',

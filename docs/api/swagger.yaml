@@ -1,0 +1,319 @@
+basePath: /
+definitions:
+  handlers.itemRequest:
+    properties:
+      category_id:
+        type: integer
+      cost_price:
+        type: string
+      description:
+        type: string
+      is_active:
+        type: boolean
+      min_stock:
+        type: integer
+      name:
+        type: string
+      selling_price:
+        type: string
+      sku:
+        type: string
+      unit:
+        type: string
+    type: object
+  handlers.supplierRequest:
+    properties:
+      address:
+        type: string
+      code:
+        type: string
+      contact_person:
+        type: string
+      email:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: ERP API untuk master item dan supplier. Seluruh endpoint /api memakai
+    token Laravel POS.
+  title: ERP API
+  version: 1.0.0
+paths:
+  /api/items:
+    get:
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size (max 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Search name, SKU, or description
+        in: query
+        name: search
+        type: string
+      - description: active or inactive
+        in: query
+        name: status
+        type: string
+      - description: Category ID
+        in: query
+        name: category_id
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List items
+      tags:
+      - Items
+    post:
+      parameters:
+      - description: Item details
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.itemRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create item
+      tags:
+      - Items
+  /api/items/{id}:
+    get:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get item
+      tags:
+      - Items
+    put:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Item details
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.itemRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update item
+      tags:
+      - Items
+  /api/items/{id}/status:
+    patch:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Status payload with is_active
+        in: body
+        name: status
+        required: true
+        schema:
+          type: object
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Set item status
+      tags:
+      - Items
+  /api/items/categories:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List item categories
+      tags:
+      - Items
+  /api/me:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Current user
+      tags:
+      - Auth
+  /api/suppliers:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List suppliers
+      tags:
+      - Suppliers
+    post:
+      parameters:
+      - description: Supplier details
+        in: body
+        name: supplier
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.supplierRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create supplier
+      tags:
+      - Suppliers
+  /api/suppliers/{id}:
+    delete:
+      parameters:
+      - description: Supplier ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete supplier
+      tags:
+      - Suppliers
+    get:
+      parameters:
+      - description: Supplier ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get supplier
+      tags:
+      - Suppliers
+    put:
+      parameters:
+      - description: Supplier ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Supplier details
+        in: body
+        name: supplier
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.supplierRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update supplier
+      tags:
+      - Suppliers
+securityDefinitions:
+  BearerAuth:
+    description: 'Gunakan format: Bearer <token>'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

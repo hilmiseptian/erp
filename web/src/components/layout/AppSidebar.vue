@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { LayoutDashboard, Truck, Package, ShoppingCart, X, Boxes } from "lucide-vue-next";
+import { LayoutDashboard, Truck, Package, ShoppingCart, X, Boxes, Tags } from "lucide-vue-next";
 import { Building2 } from "lucide-vue-next";
 import { useAuthStore } from "@/stores/auth";
 
@@ -26,6 +26,12 @@ const menuItems = [
     label: "Dashboard",
     path: "/dashboard",
     icon: LayoutDashboard,
+    active: true,
+  },
+  {
+    label: "Items",
+    path: "/items",
+    icon: Tags,
     active: true,
   },
   {

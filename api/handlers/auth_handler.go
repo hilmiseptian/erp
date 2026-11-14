@@ -7,6 +7,12 @@ import (
     "erp-api/middleware"
 )
 
+// Me returns the authenticated POS user profile.
+// @Summary Current user
+// @Tags Auth
+// @Security BearerAuth
+// @Success 200 {object} map[string]interface{}
+// @Router /api/me [get]
 func Me(c *gin.Context) {
     user, exists := c.Get("authUser")
 

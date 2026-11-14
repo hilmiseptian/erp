@@ -11,6 +11,14 @@ import (
 	"erp-api/routes"
 )
 
+// @title ERP API
+// @version 1.0.0
+// @description ERP API untuk master item dan supplier. Seluruh endpoint /api memakai token Laravel POS.
+// @BasePath /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Gunakan format: Bearer <token>
 func main() {
 	cfg := config.LoadConfig()
 

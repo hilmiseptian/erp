@@ -33,6 +33,12 @@ type supplierRequest struct {
 }
 
 // GetAll handles GET /api/suppliers
+// GetAll lists suppliers in the authenticated company.
+// @Summary List suppliers
+// @Tags Suppliers
+// @Security BearerAuth
+// @Success 200 {object} map[string]interface{}
+// @Router /api/suppliers [get]
 func (h *SupplierHandler) GetAll(c *gin.Context) {
 	user := getAuthUser(c)
 
@@ -49,6 +55,13 @@ func (h *SupplierHandler) GetAll(c *gin.Context) {
 }
 
 // GetByID handles GET /api/suppliers/:id
+// GetByID returns a supplier in the authenticated company.
+// @Summary Get supplier
+// @Tags Suppliers
+// @Security BearerAuth
+// @Param id path int true "Supplier ID"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/suppliers/{id} [get]
 func (h *SupplierHandler) GetByID(c *gin.Context) {
 	user := getAuthUser(c)
 
@@ -70,6 +83,13 @@ func (h *SupplierHandler) GetByID(c *gin.Context) {
 }
 
 // Create handles POST /api/suppliers
+// Create adds a supplier to the authenticated company.
+// @Summary Create supplier
+// @Tags Suppliers
+// @Security BearerAuth
+// @Param supplier body supplierRequest true "Supplier details"
+// @Success 201 {object} map[string]interface{}
+// @Router /api/suppliers [post]
 func (h *SupplierHandler) Create(c *gin.Context) {
 	user := getAuthUser(c)
 
@@ -112,6 +132,14 @@ func (h *SupplierHandler) Create(c *gin.Context) {
 }
 
 // Update handles PUT /api/suppliers/:id
+// Update modifies a supplier in the authenticated company.
+// @Summary Update supplier
+// @Tags Suppliers
+// @Security BearerAuth
+// @Param id path int true "Supplier ID"
+// @Param supplier body supplierRequest true "Supplier details"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/suppliers/{id} [put]
 func (h *SupplierHandler) Update(c *gin.Context) {
 	user := getAuthUser(c)
 
@@ -165,6 +193,13 @@ func (h *SupplierHandler) Update(c *gin.Context) {
 }
 
 // Delete handles DELETE /api/suppliers/:id
+// Delete removes a supplier from the authenticated company.
+// @Summary Delete supplier
+// @Tags Suppliers
+// @Security BearerAuth
+// @Param id path int true "Supplier ID"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/suppliers/{id} [delete]
 func (h *SupplierHandler) Delete(c *gin.Context) {
 	user := getAuthUser(c)
 
