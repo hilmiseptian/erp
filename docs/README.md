@@ -8,5 +8,7 @@ Dokumentasi kerja ERP selama tahap pengembangan dan pengujian manual. Semua peru
 - [Feature Registry](FEATURE-REGISTRY.md): status dan cakupan fitur ERP/POS.
 - [PRD Supplier](prd/PRD-SUPPLIER.md) dan [PRD Auth](prd/PRD-AUTH.md).
 - [Swagger API](api/swagger.yaml): spesifikasi API yang dihasilkan dari anotasi Go menggunakan swaggo.
+- Halaman Swagger UI tersedia pada route web ERP `/api-docs` setelah login.
+- PR tersedia dari Inventory di sidebar dan memakai item aktif serta branch milik company.
 
 Perbarui CHANGELOG dan FEATURE-REGISTRY saat fitur selesai. Perbarui PRD/API ketika aturan atau kontrak berubah.

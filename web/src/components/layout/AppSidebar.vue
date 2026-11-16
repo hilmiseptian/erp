@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { LayoutDashboard, Truck, Package, ShoppingCart, X, Boxes, Tags } from "lucide-vue-next";
+import { LayoutDashboard, Truck, Package, X, Boxes, Tags, BookOpen } from "lucide-vue-next";
 import { Building2 } from "lucide-vue-next";
 import { useAuthStore } from "@/stores/auth";
 
@@ -41,16 +41,18 @@ const menuItems = [
     active: true,
   },
   {
-    label: "Inventory",
-    path: null,
-    icon: Package,
-    active: false,
+    label: "API Docs",
+    path: "/api-docs",
+    icon: BookOpen,
+    active: true,
   },
   {
-    label: "Purchasing",
-    path: null,
-    icon: ShoppingCart,
-    active: false,
+    label: "Inventory",
+    icon: Package,
+    active: true,
+    children: [
+      { label: "Purchase Requests", path: "/inventory/purchase-requests" },
+    ],
   },
 ];
 
@@ -128,8 +130,17 @@ function isActive(path) {
       </p>
 
       <template v-for="item in menuItems" :key="item.label">
+        <div v-if="item.children && item.active" class="space-y-1">
+          <div class="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-400" :class="collapsed && !mobileOpen ? 'justify-center' : ''">
+            <component :is="item.icon" :size="20" />
+            <span v-if="!collapsed || mobileOpen">{{ item.label }}</span>
+          </div>
+          <RouterLink v-for="child in item.children" :key="child.path" :to="child.path" @click="emit('close-mobile')" class="block rounded-lg py-2 pl-11 pr-3 text-sm transition-colors" :class="route.path === child.path ? 'bg-blue-600/20 text-blue-300' : 'text-slate-500 hover:bg-slate-800 hover:text-white'" :title="collapsed && !mobileOpen ? child.label : undefined">
+            <span v-if="!collapsed || mobileOpen">{{ child.label }}</span>
+          </RouterLink>
+        </div>
         <RouterLink
-          v-if="item.active"
+          v-else-if="item.active"
           :to="item.path"
           @click="emit('close-mobile')"
           class="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors"

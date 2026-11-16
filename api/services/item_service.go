@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"math/big"
 	"strings"
 
 	"erp-api/models"
 	"erp-api/repositories"
+	"erp-api/utils"
 )
 
 var (
@@ -45,12 +45,12 @@ func (s *ItemService) Save(companyID, id uint64, item models.Item) error {
 	if item.MinStock < 0 {
 		return fmt.Errorf("%w: minimum stock cannot be negative", ErrItemInvalid)
 	}
-	cost, ok := new(big.Rat).SetString(item.CostPrice)
-	if !ok || !validDecimal(item.CostPrice) || cost.Sign() < 0 {
+	cost, ok := utils.ParseDecimal(item.CostPrice, 10, 2)
+	if !ok || cost.Sign() < 0 {
 		return fmt.Errorf("%w: invalid cost price", ErrItemInvalid)
 	}
-	selling, ok := new(big.Rat).SetString(item.SellingPrice)
-	if !ok || !validDecimal(item.SellingPrice) || selling.Sign() < 0 {
+	selling, ok := utils.ParseDecimal(item.SellingPrice, 10, 2)
+	if !ok || selling.Sign() < 0 {
 		return fmt.Errorf("%w: invalid selling price", ErrItemInvalid)
 	}
 	valid, err := s.Repo.CategoryBelongsToCompany(companyID, item.CategoryID)
@@ -75,23 +75,6 @@ func (s *ItemService) Save(companyID, id uint64, item models.Item) error {
 		return err
 	}
 	return s.Repo.Update(companyID, id, item)
-}
-
-func validDecimal(value string) bool {
-	if value == "" {
-		return false
-	}
-	parts := strings.Split(value, ".")
-	if len(parts) > 2 {
-		return false
-	}
-	if len(parts[0]) > 10 {
-		return false
-	}
-	if len(parts) == 2 && len(parts[1]) > 2 {
-		return false
-	}
-	return true
 }
 
 func (s *ItemService) SetActive(companyID, id uint64, active bool) error {

@@ -21,6 +21,30 @@ definitions:
       unit:
         type: string
     type: object
+  handlers.purchaseRequestLinePayload:
+    properties:
+      item_id:
+        type: integer
+      price:
+        type: string
+      qty:
+        type: string
+    type: object
+  handlers.purchaseRequestPayload:
+    properties:
+      branch_id:
+        type: integer
+      lines:
+        items:
+          $ref: '#/definitions/handlers.purchaseRequestLinePayload'
+        type: array
+      pr_date:
+        type: string
+      req_date:
+        type: string
+      supplier_id:
+        type: integer
+    type: object
   handlers.supplierRequest:
     properties:
       address:
@@ -40,8 +64,8 @@ definitions:
     type: object
 info:
   contact: {}
-  description: ERP API untuk master item dan supplier. Seluruh endpoint /api memakai
-    token Laravel POS.
+  description: ERP API untuk master item, supplier, dan purchase request. Endpoint
+    /api memakai token Laravel POS.
   title: ERP API
   version: 1.0.0
 paths:
@@ -217,6 +241,160 @@ paths:
       summary: Current user
       tags:
       - Auth
+  /api/purchase-requests:
+    get:
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size (max 100)
+        in: query
+        name: limit
+        type: integer
+      - description: PR number, branch, or requester
+        in: query
+        name: search
+        type: string
+      - description: Branch ID
+        in: query
+        name: branch_id
+        type: integer
+      - description: open, partially_ordered, ordered, or cancelled
+        in: query
+        name: status
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List purchase requests
+      tags:
+      - Purchase Requests
+    post:
+      parameters:
+      - description: Purchase request details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.purchaseRequestPayload'
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create purchase request
+      tags:
+      - Purchase Requests
+  /api/purchase-requests/{id}:
+    get:
+      parameters:
+      - description: Purchase request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get purchase request
+      tags:
+      - Purchase Requests
+    put:
+      parameters:
+      - description: Purchase request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Purchase request details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.purchaseRequestPayload'
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update purchase request
+      tags:
+      - Purchase Requests
+  /api/purchase-requests/{id}/cancel:
+    patch:
+      parameters:
+      - description: Purchase request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Cancel purchase request
+      tags:
+      - Purchase Requests
+  /api/purchase-requests/branches:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List request branches
+      tags:
+      - Purchase Requests
+  /api/purchase-requests/suppliers:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List request suppliers
+      tags:
+      - Purchase Requests
   /api/suppliers:
     get:
       responses:

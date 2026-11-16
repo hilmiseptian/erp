@@ -13,7 +13,7 @@ import (
 
 // @title ERP API
 // @version 1.0.0
-// @description ERP API untuk master item dan supplier. Seluruh endpoint /api memakai token Laravel POS.
+// @description ERP API untuk master item, supplier, dan purchase request. Endpoint /api memakai token Laravel POS.
 // @BasePath /
 // @securityDefinitions.apikey BearerAuth
 // @in header
@@ -46,6 +46,8 @@ func main() {
 		AllowCredentials: false,
 		MaxAge:           12 * time.Hour,
 	}))
+
+	router.StaticFile("/swagger.yaml", "../docs/api/swagger.yaml")
 
 	routes.SetupRoutes(router, cfg, db)
 

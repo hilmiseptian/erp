@@ -7,6 +7,8 @@ import DashboardView from '@/views/DashboardView.vue'
 import SupplierListView from '@/views/suppliers/SupplierListView.vue'
 import MainLayout from '@/components/layout/MainLayout.vue'
 import ItemListView from '@/views/items/ItemListView.vue'
+import PurchaseRequestView from '@/views/purchasing/PurchaseRequestView.vue'
+import SwaggerView from '@/views/SwaggerView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -52,6 +54,18 @@ const router = createRouter({
           meta: {
             title: 'Suppliers',
           },
+        },
+        {
+          path: 'inventory/purchase-requests',
+          name: 'purchase-requests',
+          component: PurchaseRequestView,
+          meta: { title: 'Purchase Requests' },
+        },
+        {
+          path: 'api-docs',
+          name: 'api-docs',
+          component: SwaggerView,
+          meta: { title: 'API Documentation' },
         },
       ],
     },

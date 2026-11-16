@@ -42,6 +42,20 @@ func SetupRoutes(router *gin.Engine, cfg config.Config, db *sql.DB) {
 		items.PATCH("/:id/status", itemHandler.SetActive)
 	}
 
+	prRepository := repositories.NewPurchaseRequestRepository(db)
+	prService := services.NewPurchaseRequestService(prRepository)
+	prHandler := handlers.NewPurchaseRequestHandler(prService)
+	purchaseRequests := api.Group("/purchase-requests")
+	{
+		purchaseRequests.GET("/branches", prHandler.Branches)
+		purchaseRequests.GET("/suppliers", prHandler.Suppliers)
+		purchaseRequests.GET("", prHandler.List)
+		purchaseRequests.GET("/:id", prHandler.Get)
+		purchaseRequests.POST("", prHandler.Create)
+		purchaseRequests.PUT("/:id", prHandler.Update)
+		purchaseRequests.PATCH("/:id/cancel", prHandler.Cancel)
+	}
+
 	// Supplier routes
 	suppliers := api.Group("/suppliers")
 	{
