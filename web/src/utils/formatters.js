@@ -11,6 +11,8 @@ export function formatDateLabel(value, locale = "en-US") {
   return new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeZone: "UTC" }).format(date);
 }
 
-export function formatCurrency(value, locale = "id-ID", currency = "IDR") {
-  return new Intl.NumberFormat(locale, { style: "currency", currency }).format(Number(value || 0));
+export function formatCurrency(value, locale = "id-ID", currency = "IDR", maximumFractionDigits) {
+  const options = { style: "currency", currency };
+  if (maximumFractionDigits !== undefined) options.maximumFractionDigits = maximumFractionDigits;
+  return new Intl.NumberFormat(locale, options).format(Number(value || 0));
 }
