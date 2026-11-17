@@ -1,6 +1,7 @@
 import { computed, onMounted, ref, watch } from "vue";
 import itemService from "@/services/itemService";
 import purchaseRequestService from "@/services/purchaseRequestService";
+import { toDateInputValue } from "@/utils/formatters";
 
 function todayAsDateInput() {
   const today = new Date();
@@ -88,8 +89,8 @@ export function usePurchaseRequests() {
       form.value = {
         branch_id: String(data.data.branch_id),
         supplier_id: String(data.data.supplier_id),
-        pr_date: data.data.pr_date,
-        req_date: data.data.req_date,
+        pr_date: toDateInputValue(data.data.pr_date),
+        req_date: toDateInputValue(data.data.req_date),
         lines: data.data.lines.map((line) => ({
           item_id: String(line.item_id),
           qty: line.qty,
