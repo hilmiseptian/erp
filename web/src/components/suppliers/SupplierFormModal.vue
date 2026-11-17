@@ -37,7 +37,7 @@ const form = reactive(defaultForm());
 
 const isEditing = () => Boolean(props.supplier?.id);
 
-// Isi form setiap kali modal dibuka atau data supplier berubah.
+// Reset and populate the form whenever the modal opens or supplier data changes.
 watch(
   () => [props.show, props.supplier],
   ([show, supplier]) => {

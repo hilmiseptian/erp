@@ -1,129 +1,13 @@
 <script setup>
-import { ref, onMounted } from "vue";
 import { Plus, Pencil, Trash2, RefreshCw, Truck } from "lucide-vue-next";
-
-import supplierService from "@/services/supplierService";
 import SupplierFormModal from "@/components/suppliers/SupplierFormModal.vue";
+import { useSuppliers } from "@/composables/useSuppliers";
 
-// Page state
-const suppliers = ref([]);
-const loading = ref(false);
-const submitting = ref(false);
-const deletingId = ref(null);
-
-// Notification state
-const errorMessage = ref("");
-const modalError = ref("");
-const successMessage = ref("");
-
-// Modal state
-const showModal = ref(false);
-const selectedSupplier = ref(null);
-
-// Fetch suppliers
-const fetchSuppliers = async () => {
-  loading.value = true;
-  errorMessage.value = "";
-
-  try {
-    const response = await supplierService.getAll();
-    suppliers.value = response.data.data || [];
-  } catch (error) {
-    console.error("Failed to fetch suppliers:", error);
-
-    errorMessage.value = error.response?.data?.message || "Failed to load suppliers.";
-  } finally {
-    loading.value = false;
-  }
-};
-
-// Open create modal
-const openCreateModal = () => {
-  successMessage.value = "";
-  modalError.value = "";
-  selectedSupplier.value = null;
-  showModal.value = true;
-};
-
-// Open edit modal
-const openEditModal = async (id) => {
-  successMessage.value = "";
-  modalError.value = "";
-
-  try {
-    const response = await supplierService.getById(id);
-    selectedSupplier.value = response.data.data;
-    showModal.value = true;
-  } catch (error) {
-    console.error("Failed to fetch supplier:", error);
-
-    errorMessage.value = error.response?.data?.message || "Failed to load supplier details.";
-  }
-};
-
-// Close modal
-const closeModal = () => {
-  if (submitting.value) return;
-
-  showModal.value = false;
-  selectedSupplier.value = null;
-  modalError.value = "";
-};
-
-// Save supplier
-const saveSupplier = async (payload) => {
-  submitting.value = true;
-  modalError.value = "";
-
-  try {
-    if (selectedSupplier.value) {
-      await supplierService.update(selectedSupplier.value.id, payload);
-      successMessage.value = "Supplier updated successfully.";
-    } else {
-      await supplierService.create(payload);
-      successMessage.value = "Supplier created successfully.";
-    }
-
-    showModal.value = false;
-    selectedSupplier.value = null;
-
-    await fetchSuppliers();
-  } catch (error) {
-    console.error("Failed to save supplier:", error);
-
-    modalError.value = error.response?.data?.message || "Failed to save supplier.";
-  } finally {
-    submitting.value = false;
-  }
-};
-
-// Delete supplier
-const deleteSupplier = async (supplier) => {
-  const confirmed = window.confirm(`Are you sure you want to delete "${supplier.name}"?`);
-
-  if (!confirmed) return;
-
-  deletingId.value = supplier.id;
-  errorMessage.value = "";
-  successMessage.value = "";
-
-  try {
-    await supplierService.delete(supplier.id);
-
-    successMessage.value = "Supplier deleted successfully.";
-    await fetchSuppliers();
-  } catch (error) {
-    console.error("Failed to delete supplier:", error);
-
-    errorMessage.value = error.response?.data?.message || "Failed to delete supplier.";
-  } finally {
-    deletingId.value = null;
-  }
-};
-
-onMounted(() => {
-  fetchSuppliers();
-});
+const {
+  suppliers, loading, submitting, deletingId, errorMessage, modalError,
+  successMessage, showModal, selectedSupplier, fetchSuppliers,
+  openCreateModal, openEditModal, closeModal, saveSupplier, deleteSupplier,
+} = useSuppliers();
 </script>
 
 <template>
