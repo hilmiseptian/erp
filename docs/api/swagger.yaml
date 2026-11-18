@@ -45,6 +45,28 @@ definitions:
       supplier_id:
         type: integer
     type: object
+  handlers.purchaseOrderLineInput:
+    properties:
+      item_id:
+        type: integer
+      price:
+        type: string
+      qty:
+        type: string
+    type: object
+  handlers.purchaseOrderPayload:
+    properties:
+      due_date:
+        type: string
+      lines:
+        items:
+          $ref: '#/definitions/handlers.purchaseOrderLineInput'
+        type: array
+      po_date:
+        type: string
+      ref_num:
+        type: string
+    type: object
   handlers.supplierRequest:
     properties:
       address:
@@ -241,6 +263,132 @@ paths:
       summary: Current user
       tags:
       - Auth
+  /api/purchase-orders:
+    get:
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size (max 100)
+        in: query
+        name: limit
+        type: integer
+      - description: PO number, source PR number, supplier, or branch
+        in: query
+        name: search
+        type: string
+      - description: draft, ordered, partially_received, received, or cancelled
+        in: query
+        name: status
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List purchase orders
+      tags:
+      - Purchase Orders
+    post:
+      parameters:
+      - description: Purchase order details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.purchaseOrderPayload'
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create purchase order from one PR
+      tags:
+      - Purchase Orders
+  /api/purchase-orders/purchase-requests:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List PRs with remaining order quantities
+      tags:
+      - Purchase Orders
+  /api/purchase-orders/purchase-requests/{pr_number}:
+    get:
+      parameters:
+      - description: Source purchase request number
+        in: path
+        name: pr_number
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get PR lines with remaining quantities
+      tags:
+      - Purchase Orders
+  /api/purchase-orders/{id}:
+    get:
+      parameters:
+      - description: Purchase order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get purchase order
+      tags:
+      - Purchase Orders
+  /api/purchase-orders/{id}/cancel:
+    patch:
+      parameters:
+      - description: Purchase order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Cancel purchase order
+      tags:
+      - Purchase Orders
   /api/purchase-requests:
     get:
       parameters:

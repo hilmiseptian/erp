@@ -52,6 +52,7 @@ const menuItems = [
     active: true,
     children: [
       { label: "Purchase Requests", path: "/inventory/purchase-requests" },
+      { label: "Purchase Orders", path: "/inventory/purchase-orders" },
     ],
   },
 ];

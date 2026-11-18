@@ -123,8 +123,6 @@ func (r *ItemRepository) SetActive(companyID, id uint64, active bool) error {
 	return err
 }
 
-type scanner interface{ Scan(...any) error }
-
 func scanItem(row scanner) (models.Item, error) {
 	var i models.Item
 	var categoryName sql.NullString

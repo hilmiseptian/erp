@@ -8,6 +8,7 @@ import SupplierListView from '@/views/suppliers/SupplierListView.vue'
 import MainLayout from '@/components/layout/MainLayout.vue'
 import ItemListView from '@/views/items/ItemListView.vue'
 import PurchaseRequestView from '@/views/purchasing/PurchaseRequestView.vue'
+import PurchaseOrderView from '@/views/purchasing/PurchaseOrderView.vue'
 import SwaggerView from '@/views/SwaggerView.vue'
 
 const router = createRouter({
@@ -60,6 +61,12 @@ const router = createRouter({
           name: 'purchase-requests',
           component: PurchaseRequestView,
           meta: { title: 'Purchase Requests' },
+        },
+        {
+          path: 'inventory/purchase-orders',
+          name: 'purchase-orders',
+          component: PurchaseOrderView,
+          meta: { title: 'Purchase Orders' },
         },
         {
           path: 'api-docs',
