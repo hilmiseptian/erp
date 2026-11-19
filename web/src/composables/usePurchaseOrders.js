@@ -110,7 +110,7 @@ export function usePurchaseOrders() {
         due_date: dueDate.value,
         lines: sourceLines.value.map((line) => ({
           item_id: Number(line.item_id),
-          qty: String(line.qty),
+          qty: Number(line.qty),
           price: String(line.price),
         })),
       });

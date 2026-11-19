@@ -9,7 +9,7 @@ type PurchaseRequestLine struct {
 	SKU      string `json:"sku"`
 	ItemName string `json:"item_name"`
 	Unit     string `json:"unit"`
-	Qty      string `json:"qty"`
+	Qty      int64  `json:"qty"`
 	Price    string `json:"price"`
 }
 
@@ -24,7 +24,7 @@ type PurchaseRequest struct {
 	PRDate       string                `json:"pr_date"`
 	ReqDate      string                `json:"req_date"`
 	Status       string                `json:"status"`
-	TotalQty     string                `json:"total_qty"`
+	TotalQty     int64                 `json:"total_qty"`
 	TotalPrice   string                `json:"total_price"`
 	CreatedBy    uint64                `json:"created_by"`
 	Creator      string                `json:"creator"`

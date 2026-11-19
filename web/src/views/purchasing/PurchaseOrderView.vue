@@ -98,7 +98,7 @@ const {
               <h3 class="font-semibold text-slate-800">Remaining PR quantities</h3>
               <div v-for="line in sourceLines" :key="line.item_id" class="grid gap-3 rounded-lg border border-slate-200 p-3 sm:grid-cols-[minmax(12rem,1fr)_7rem_8rem_8rem]">
                 <div><p class="font-medium">{{ line.sku }} — {{ line.item_name }} ({{ line.unit }})</p><p class="text-xs text-slate-500">Requested {{ line.requested_qty }} · Already ordered {{ line.ordered_qty }} · Remaining {{ line.remaining_qty }}</p></div>
-                <label class="text-xs font-medium text-slate-600">Order qty<input v-model="line.qty" required type="number" min="0.001" :max="line.remaining_qty" step="0.001" class="mt-1 w-full rounded-md border border-slate-300 px-2.5 py-2 text-sm font-normal" /></label>
+                <label class="text-xs font-medium text-slate-600">Order qty<input v-model="line.qty" required type="number" min="1" :max="line.remaining_qty" step="1" class="mt-1 w-full rounded-md border border-slate-300 px-2.5 py-2 text-sm font-normal" /></label>
                 <label class="text-xs font-medium text-slate-600">PO unit price<input v-model="line.price" required type="number" min="0" step="0.01" class="mt-1 w-full rounded-md border border-slate-300 px-2.5 py-2 text-sm font-normal" /></label>
                 <p class="self-center text-xs text-slate-500">PR price: {{ formatCurrency(line.pr_price) }}</p>
               </div>

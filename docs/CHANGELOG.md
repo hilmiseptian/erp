@@ -10,7 +10,11 @@ Dokumen ini diperbarui terus selama manual testing dan pengembangan. Jangan buat
 - Menyesuaikan PR ke tabel `purchase_request_header` dan `purchase_request_detail`, termasuk supplier serta total kuantitas/nilai.
 - Menambahkan `req_date` pada header PR sebagai tanggal barang dibutuhkan.
 - Menambahkan MVP Purchase Order yang dapat dibuat parsial dari satu PR; sisa kuantitas PR dihitung dari PO aktif.
-- Item ERP membaca saldo yang ada; saldo tidak dapat diedit dari master item.
+- Mengubah kuantitas PR, PO, dan penerimaan menjadi bilangan bulat.
+- Menambahkan Goods Receipt parsial dari PO; harga mengikuti harga PO dan posting langsung menambah saldo branch.
+- Menambahkan modul Stock dengan saldo per company/branch/item, pembukaan saldo nol, dan rincian pergerakan stock card; HPP masuk mengikuti harga PO.
+- Menghubungkan pembayaran POS dengan pengurangan saldo branch, pencatatan stock card, dan HPP keluar berbasis moving average.
+- Memindahkan tampilan saldo dari Master Item ke modul Stock.
 - Menambahkan dokumentasi Swagger awal dari anotasi Go.
 - Menambahkan halaman Swagger UI pada web ERP (`/api-docs`) dengan Try it out.
 

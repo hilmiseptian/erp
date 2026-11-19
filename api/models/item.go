@@ -13,7 +13,6 @@ type Item struct {
 	Description  *string   `json:"description"`
 	CostPrice    string    `json:"cost_price"`
 	SellingPrice string    `json:"selling_price"`
-	Stock        int64     `json:"stock"`
 	MinStock     int64     `json:"min_stock"`
 	Unit         string    `json:"unit"`
 	IsActive     bool      `json:"is_active"`

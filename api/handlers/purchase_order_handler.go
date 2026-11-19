@@ -29,7 +29,7 @@ type purchaseOrderPayload struct {
 
 type purchaseOrderLineInput struct {
 	ItemID uint64 `json:"item_id"`
-	Qty    string `json:"qty"`
+	Qty    int64  `json:"qty"`
 	Price  string `json:"price"`
 }
 

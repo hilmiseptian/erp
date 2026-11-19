@@ -95,10 +95,9 @@ func validatePO(po models.PurchaseOrder) error {
 		return fmt.Errorf("%w: source PR and at least one detail line are required", ErrPOInvalid)
 	}
 	for _, line := range po.Lines {
-		qty, qtyOK := utils.ParseDecimal(line.Qty, 12, 3)
 		price, priceOK := utils.ParseDecimal(line.Price, 10, 2)
-		if line.ItemID == 0 || !qtyOK || qty.Sign() <= 0 || !priceOK || price.Sign() < 0 {
-			return fmt.Errorf("%w: item, positive quantity (max 3 decimals), and non-negative price (max 2 decimals) are required", ErrPOInvalid)
+		if line.ItemID == 0 || line.Qty < 1 || !priceOK || price.Sign() < 0 {
+			return fmt.Errorf("%w: item, positive whole-number quantity, and non-negative price (max 2 decimals) are required", ErrPOInvalid)
 		}
 	}
 	return nil

@@ -69,6 +69,28 @@ func SetupRoutes(router *gin.Engine, cfg config.Config, db *sql.DB) {
 		purchaseOrders.PATCH("/:id/cancel", poHandler.Cancel)
 	}
 
+	grRepository := repositories.NewGoodReceiptRepository(db)
+	grService := services.NewGoodReceiptService(grRepository)
+	grHandler := handlers.NewGoodReceiptHandler(grService)
+	goodReceipts := api.Group("/good-receipts")
+	{
+		goodReceipts.GET("/purchase-orders", grHandler.Sources)
+		goodReceipts.GET("/purchase-orders/:po_number", grHandler.Source)
+		goodReceipts.GET("", grHandler.List)
+		goodReceipts.GET("/:id", grHandler.Get)
+		goodReceipts.POST("", grHandler.Create)
+	}
+
+	stockRepository := repositories.NewStockRepository(db)
+	stockService := services.NewStockService(stockRepository)
+	stockHandler := handlers.NewStockHandler(stockService)
+	stocks := api.Group("/stocks")
+	{
+		stocks.GET("/branches", stockHandler.Branches)
+		stocks.GET("", stockHandler.List)
+		stocks.GET("/:branch_id/:item_id/cards", stockHandler.Cards)
+	}
+
 	// Supplier routes
 	suppliers := api.Group("/suppliers")
 	{

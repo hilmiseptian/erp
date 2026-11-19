@@ -10,5 +10,7 @@ Dokumentasi kerja ERP selama tahap pengembangan dan pengujian manual. Semua peru
 - [Swagger API](api/swagger.yaml): spesifikasi API yang dihasilkan dari anotasi Go menggunakan swaggo.
 - Halaman Swagger UI tersedia pada route web ERP `/api-docs` setelah login.
 - PR tersedia dari Inventory di sidebar dan memakai item aktif serta branch milik company.
+- Stock dan Good Receipts tersedia sebagai child Inventory; saldo dibuka nol per branch dan pergerakan penjualan POS mengurangi saldo saat pembayaran.
+- Kuantitas transaksi PR, PO, GR, dan POS menggunakan bilangan bulat. Migration disimpan di repo POS dan belum dijalankan.
 
 Perbarui CHANGELOG dan FEATURE-REGISTRY saat fitur selesai. Perbarui PRD/API ketika aturan atau kontrak berubah.

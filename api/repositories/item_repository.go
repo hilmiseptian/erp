@@ -35,7 +35,7 @@ func (r *ItemRepository) List(companyID uint64, search, status string, categoryI
 	}
 	queryArgs := append(append([]any{}, args...), limit, offset)
 	rows, err := r.DB.Query(`SELECT i.id,i.company_id,i.category_id,c.name,i.name,i.sku,i.description,
-		i.cost_price,i.selling_price,i.stock,i.min_stock,i.unit,i.is_active,i.created_at,i.updated_at
+		i.cost_price,i.selling_price,i.min_stock,i.unit,i.is_active,i.created_at,i.updated_at
 		FROM items i LEFT JOIN categories c ON c.id=i.category_id AND (c.company_id=i.company_id OR c.company_id IS NULL)
 		WHERE `+clause+` ORDER BY i.name,i.id LIMIT ? OFFSET ?`, queryArgs...)
 	if err != nil {
@@ -55,7 +55,7 @@ func (r *ItemRepository) List(companyID uint64, search, status string, categoryI
 
 func (r *ItemRepository) Get(companyID, id uint64) (*models.Item, error) {
 	row := r.DB.QueryRow(`SELECT i.id,i.company_id,i.category_id,c.name,i.name,i.sku,i.description,
-		i.cost_price,i.selling_price,i.stock,i.min_stock,i.unit,i.is_active,i.created_at,i.updated_at
+		i.cost_price,i.selling_price,i.min_stock,i.unit,i.is_active,i.created_at,i.updated_at
 		FROM items i LEFT JOIN categories c ON c.id=i.category_id AND (c.company_id=i.company_id OR c.company_id IS NULL)
 		WHERE i.company_id=? AND i.id=? LIMIT 1`, companyID, id)
 	item, err := scanItem(row)
@@ -96,7 +96,7 @@ func (r *ItemRepository) SKUExists(companyID uint64, sku string, excludeID uint6
 }
 
 func (r *ItemRepository) Create(companyID uint64, item models.Item) (uint64, error) {
-	result, err := r.DB.Exec(`INSERT INTO items (company_id,category_id,name,sku,description,cost_price,selling_price,stock,min_stock,unit,is_active) VALUES (?,?,?,?,?,?,?,0,?,?,?)`,
+	result, err := r.DB.Exec(`INSERT INTO items (company_id,category_id,name,sku,description,cost_price,selling_price,min_stock,unit,is_active) VALUES (?,?,?,?,?,?,?,?,?,?)`,
 		companyID, item.CategoryID, item.Name, item.SKU, item.Description, item.CostPrice, item.SellingPrice, item.MinStock, item.Unit, item.IsActive)
 	if err != nil {
 		return 0, err
@@ -126,7 +126,7 @@ func (r *ItemRepository) SetActive(companyID, id uint64, active bool) error {
 func scanItem(row scanner) (models.Item, error) {
 	var i models.Item
 	var categoryName sql.NullString
-	err := row.Scan(&i.ID, &i.CompanyID, &i.CategoryID, &categoryName, &i.Name, &i.SKU, &i.Description, &i.CostPrice, &i.SellingPrice, &i.Stock, &i.MinStock, &i.Unit, &i.IsActive, &i.CreatedAt, &i.UpdatedAt)
+	err := row.Scan(&i.ID, &i.CompanyID, &i.CategoryID, &categoryName, &i.Name, &i.SKU, &i.Description, &i.CostPrice, &i.SellingPrice, &i.MinStock, &i.Unit, &i.IsActive, &i.CreatedAt, &i.UpdatedAt)
 	if err != nil {
 		return i, fmt.Errorf("scan item: %w", err)
 	}

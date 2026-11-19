@@ -28,7 +28,8 @@ definitions:
       price:
         type: string
       qty:
-        type: string
+        format: int64
+        type: integer
     type: object
   handlers.purchaseRequestPayload:
     properties:
@@ -52,7 +53,8 @@ definitions:
       price:
         type: string
       qty:
-        type: string
+        format: int64
+        type: integer
     type: object
   handlers.purchaseOrderPayload:
     properties:
@@ -65,6 +67,25 @@ definitions:
       po_date:
         type: string
       ref_num:
+        type: string
+    type: object
+  handlers.goodReceiptLineInput:
+    properties:
+      item_id:
+        type: integer
+      qty:
+        format: int64
+        type: integer
+    type: object
+  handlers.goodReceiptPayload:
+    properties:
+      gr_date:
+        type: string
+      lines:
+        items:
+          $ref: '#/definitions/handlers.goodReceiptLineInput'
+        type: array
+      po_number:
         type: string
     type: object
   handlers.supplierRequest:
@@ -86,11 +107,193 @@ definitions:
     type: object
 info:
   contact: {}
-  description: ERP API untuk master item, supplier, dan purchase request. Endpoint
+  description: ERP API untuk master item, supplier, purchasing, dan inventory. Endpoint
     /api memakai token Laravel POS.
   title: ERP API
   version: 1.0.0
 paths:
+  /api/good-receipts:
+    get:
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size (max 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Search by GR, PO, supplier, or branch
+        in: query
+        name: search
+        type: string
+      - description: posted, draft, or cancelled
+        in: query
+        name: status
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List good receipts
+      tags:
+      - Good Receipts
+    post:
+      parameters:
+      - description: Good receipt details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.goodReceiptPayload'
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Post a good receipt and add its quantities to branch stock
+      tags:
+      - Good Receipts
+  /api/good-receipts/purchase-orders:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List purchase orders available for receipt
+      tags:
+      - Good Receipts
+  /api/good-receipts/purchase-orders/{po_number}:
+    get:
+      parameters:
+      - description: Purchase order number
+        in: path
+        name: po_number
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get remaining quantities for a purchase order
+      tags:
+      - Good Receipts
+  /api/good-receipts/{id}:
+    get:
+      parameters:
+      - description: Good receipt ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get good receipt details
+      tags:
+      - Good Receipts
+  /api/stocks:
+    get:
+      parameters:
+      - description: Branch ID
+        in: query
+        name: branch_id
+        required: true
+        type: integer
+      - description: Item name or SKU
+        in: query
+        name: search
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List item stock balances for a branch
+      tags:
+      - Stock
+  /api/stocks/branches:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List branches for stock lookup
+      tags:
+      - Stock
+  /api/stocks/{branch_id}/{item_id}/cards:
+    get:
+      parameters:
+      - description: Branch ID
+        in: path
+        name: branch_id
+        required: true
+        type: integer
+      - description: Item ID
+        in: path
+        name: item_id
+        required: true
+        type: integer
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List stock movements for a branch item
+      tags:
+      - Stock
   /api/items:
     get:
       parameters:

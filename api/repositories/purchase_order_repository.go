@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"math/big"
 	"strings"
 
 	"erp-api/models"
@@ -143,16 +142,16 @@ func (r *PurchaseOrderRepository) Create(companyID, userID uint64, number, prNum
 	if err != nil {
 		return 0, err
 	}
-	available := make(map[uint64]string, len(remaining))
+	available := make(map[uint64]int64, len(remaining))
 	for _, line := range remaining {
 		available[line.ItemID] = line.RemainingQty
 	}
-	requested := make(map[uint64]string)
+	requested := make(map[uint64]int64)
 	for _, line := range lines {
-		requested[line.ItemID] = addDecimalStrings(requested[line.ItemID], line.Qty)
+		requested[line.ItemID] += line.Qty
 	}
 	for itemID, qty := range requested {
-		if remainingQty, ok := available[itemID]; !ok || decimalExceeds(qty, remainingQty) {
+		if remainingQty, ok := available[itemID]; !ok || qty > remainingQty {
 			return 0, ErrPurchaseOrderQty
 		}
 	}
@@ -238,8 +237,8 @@ type queryer interface {
 }
 
 func remainingPRLines(q queryer, prNumber string) ([]models.PurchaseOrderLine, error) {
-	rows, err := q.Query(`SELECT d.item_id,i.sku,i.name,i.unit,CAST(SUM(d.qty) AS CHAR),
-		CAST(COALESCE(o.ordered_qty,0) AS CHAR),CAST(SUM(d.qty)-COALESCE(o.ordered_qty,0) AS CHAR),
+	rows, err := q.Query(`SELECT d.item_id,i.sku,i.name,i.unit,CAST(SUM(d.qty) AS SIGNED),
+	CAST(COALESCE(o.ordered_qty,0) AS SIGNED),CAST(SUM(d.qty)-COALESCE(o.ordered_qty,0) AS SIGNED),
 		CAST(ROUND(SUM(d.qty*d.price)/NULLIF(SUM(d.qty),0),2) AS CHAR)
 		FROM purchase_request_detail d JOIN items i ON i.id=d.item_id
 		LEFT JOIN (SELECT pd.item_id,SUM(pd.qty) AS ordered_qty FROM purchase_order_detail pd
@@ -292,23 +291,4 @@ func refreshPRStatus(tx *sql.Tx, prNumber string) error {
 	}
 	_, err = tx.Exec(`UPDATE purchase_request_header SET status=? WHERE pr_number=? AND status IN ('open','partially_ordered','ordered')`, status, prNumber)
 	return err
-}
-
-// These helpers accumulate repeated item rows using exact rational arithmetic.
-func addDecimalStrings(left, right string) string {
-	if left == "" {
-		return right
-	}
-	a, aOK := new(big.Rat).SetString(left)
-	b, bOK := new(big.Rat).SetString(right)
-	if !aOK || !bOK {
-		return right
-	}
-	return new(big.Rat).Add(a, b).FloatString(3)
-}
-
-func decimalExceeds(value, maximum string) bool {
-	a, aOK := new(big.Rat).SetString(value)
-	b, bOK := new(big.Rat).SetString(maximum)
-	return !aOK || !bOK || a.Cmp(b) > 0
 }

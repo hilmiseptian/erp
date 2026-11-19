@@ -278,8 +278,8 @@ const {
                     v-model="line.qty"
                     required
                     type="number"
-                    min="0.001"
-                    step="0.001"
+                    min="1"
+                    step="1"
                     class="w-full rounded-md border border-slate-300 px-2.5 py-2 text-sm font-normal" /></label
                 ><label class="space-y-1 text-xs font-medium text-slate-600"
                   >Price<input

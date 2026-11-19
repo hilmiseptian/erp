@@ -9,11 +9,11 @@ type PurchaseOrderLine struct {
 	SKU          string `json:"sku"`
 	ItemName     string `json:"item_name"`
 	Unit         string `json:"unit"`
-	Qty          string `json:"qty"`
+	Qty          int64  `json:"qty"`
 	Price        string `json:"price"`
-	RequestedQty string `json:"requested_qty,omitempty"`
-	OrderedQty   string `json:"ordered_qty,omitempty"`
-	RemainingQty string `json:"remaining_qty,omitempty"`
+	RequestedQty int64  `json:"requested_qty,omitempty"`
+	OrderedQty   int64  `json:"ordered_qty,omitempty"`
+	RemainingQty int64  `json:"remaining_qty,omitempty"`
 }
 
 type PurchaseOrder struct {
@@ -27,7 +27,7 @@ type PurchaseOrder struct {
 	PODate       string              `json:"po_date"`
 	DueDate      string              `json:"due_date"`
 	Status       string              `json:"status"`
-	TotalQty     string              `json:"total_qty"`
+	TotalQty     int64               `json:"total_qty"`
 	TotalPrice   string              `json:"total_price"`
 	CreatedBy    uint64              `json:"created_by"`
 	UpdatedBy    *uint64             `json:"updated_by"`

@@ -19,10 +19,9 @@ func validatePR(pr models.PurchaseRequest) error {
 		return fmt.Errorf("%w: branch, supplier, and at least one detail line are required", ErrPRInvalid)
 	}
 	for _, line := range pr.Lines {
-		qty, qtyOK := utils.ParseDecimal(line.Qty, 12, 3)
 		price, priceOK := utils.ParseDecimal(line.Price, 10, 2)
-		if line.ItemID == 0 || !qtyOK || qty.Sign() <= 0 || !priceOK || price.Sign() < 0 {
-			return fmt.Errorf("%w: item, positive quantity (max 3 decimals), and price (max 2 decimals) are required", ErrPRInvalid)
+		if line.ItemID == 0 || line.Qty < 1 || !priceOK || price.Sign() < 0 {
+			return fmt.Errorf("%w: item, positive whole-number quantity, and price (max 2 decimals) are required", ErrPRInvalid)
 		}
 	}
 	return nil

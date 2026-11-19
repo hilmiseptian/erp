@@ -125,7 +125,7 @@ export function usePurchaseRequests() {
       supplier_id: Number(form.value.supplier_id),
       lines: form.value.lines.map((line) => ({
         item_id: Number(line.item_id),
-        qty: String(line.qty),
+        qty: Number(line.qty),
         price: String(line.price),
       })),
     };
