@@ -88,6 +88,33 @@ definitions:
       po_number:
         type: string
     type: object
+  handlers.stockAdjustmentLinePayload:
+    properties:
+      actual_qty:
+        format: int64
+        type: integer
+      item_id:
+        type: integer
+    type: object
+  handlers.stockAdjustmentPayload:
+    properties:
+      adjustment_date:
+        type: string
+      adjustment_type:
+        enum:
+        - opening_balance
+        - adjustment
+        type: string
+      branch_id:
+        type: integer
+      lines:
+        items:
+          $ref: '#/definitions/handlers.stockAdjustmentLinePayload'
+        type: array
+      reason:
+        type: string
+        x-nullable: true
+    type: object
   handlers.supplierRequest:
     properties:
       address:
@@ -249,6 +276,162 @@ paths:
       summary: List item stock balances for a branch
       tags:
       - Stock
+  /api/stock-adjustments:
+    get:
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size (max 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Branch ID
+        in: query
+        name: branch_id
+        type: integer
+      - description: draft, posted, or cancelled
+        in: query
+        name: status
+        type: string
+      - description: opening_balance or adjustment
+        in: query
+        name: adjustment_type
+        type: string
+      - description: Document number, branch, or reason
+        in: query
+        name: search
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List stock adjustments
+      tags:
+      - Stock Adjustments
+    post:
+      parameters:
+      - description: Stock adjustment details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.stockAdjustmentPayload'
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create stock adjustment draft
+      tags:
+      - Stock Adjustments
+  /api/stock-adjustments/{id}:
+    get:
+      parameters:
+      - description: Stock adjustment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get stock adjustment
+      tags:
+      - Stock Adjustments
+    put:
+      parameters:
+      - description: Stock adjustment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Stock adjustment details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.stockAdjustmentPayload'
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update stock adjustment draft
+      tags:
+      - Stock Adjustments
+  /api/stock-adjustments/{id}/cancel:
+    patch:
+      parameters:
+      - description: Stock adjustment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Cancel stock adjustment draft
+      tags:
+      - Stock Adjustments
+  /api/stock-adjustments/{id}/post:
+    post:
+      parameters:
+      - description: Stock adjustment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Post a stock adjustment
+      tags:
+      - Stock Adjustments
   /api/stocks/branches:
     get:
       responses:

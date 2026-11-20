@@ -11,6 +11,7 @@ import PurchaseRequestView from '@/views/purchasing/PurchaseRequestView.vue'
 import PurchaseOrderView from '@/views/purchasing/PurchaseOrderView.vue'
 import GoodReceiptView from '@/views/purchasing/GoodReceiptView.vue'
 import StockView from '@/views/inventory/StockView.vue'
+import StockAdjustmentView from '@/views/inventory/StockAdjustmentView.vue'
 import SwaggerView from '@/views/SwaggerView.vue'
 
 const router = createRouter({
@@ -81,6 +82,12 @@ const router = createRouter({
           name: 'stock',
           component: StockView,
           meta: { title: 'Stock' },
+        },
+        {
+          path: 'inventory/stock-adjustments',
+          name: 'stock-adjustments',
+          component: StockAdjustmentView,
+          meta: { title: 'Stock Adjustments' },
         },
         {
           path: 'api-docs',

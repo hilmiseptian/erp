@@ -13,7 +13,7 @@ import (
 
 // @title ERP API
 // @version 1.0.0
-// @description ERP API untuk master item, supplier, dan purchase request. Endpoint /api memakai token Laravel POS.
+// @description ERP API for item, supplier, purchasing, and inventory workflows. Endpoints under /api use the Laravel POS token.
 // @BasePath /
 // @securityDefinitions.apikey BearerAuth
 // @in header

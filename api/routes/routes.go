@@ -91,6 +91,19 @@ func SetupRoutes(router *gin.Engine, cfg config.Config, db *sql.DB) {
 		stocks.GET("/:branch_id/:item_id/cards", stockHandler.Cards)
 	}
 
+	stockAdjustmentRepository := repositories.NewStockAdjustmentRepository(db)
+	stockAdjustmentService := services.NewStockAdjustmentService(stockAdjustmentRepository)
+	stockAdjustmentHandler := handlers.NewStockAdjustmentHandler(stockAdjustmentService)
+	stockAdjustments := api.Group("/stock-adjustments")
+	{
+		stockAdjustments.GET("", stockAdjustmentHandler.List)
+		stockAdjustments.GET("/:id", stockAdjustmentHandler.Get)
+		stockAdjustments.POST("", stockAdjustmentHandler.Create)
+		stockAdjustments.PUT("/:id", stockAdjustmentHandler.Update)
+		stockAdjustments.POST("/:id/post", stockAdjustmentHandler.Post)
+		stockAdjustments.PATCH("/:id/cancel", stockAdjustmentHandler.Cancel)
+	}
+
 	// Supplier routes
 	suppliers := api.Group("/suppliers")
 	{

@@ -13,6 +13,7 @@ Dokumen ini diperbarui terus selama manual testing dan pengembangan. Jangan buat
 - Mengubah kuantitas PR, PO, dan penerimaan menjadi bilangan bulat.
 - Menambahkan Goods Receipt parsial dari PO; harga mengikuti harga PO dan posting langsung menambah saldo branch.
 - Menambahkan modul Stock dengan saldo per company/branch/item, pembukaan saldo nol, dan rincian pergerakan stock card; HPP masuk mengikuti harga PO.
+- Menambahkan MVP Stock Adjustment dengan opening balance dan koreksi stok, snapshot system quantity, posting atomik ke saldo branch/stock card, dan validasi satu opening balance per item per branch. HPP sementara memakai item cost price.
 - Menghubungkan pembayaran POS dengan pengurangan saldo branch, pencatatan stock card, dan HPP keluar berbasis moving average.
 - Memindahkan tampilan saldo dari Master Item ke modul Stock.
 - Menambahkan dokumentasi Swagger awal dari anotasi Go.
