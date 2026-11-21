@@ -132,13 +132,318 @@ definitions:
       phone:
         type: string
     type: object
+  handlers.customerPayload:
+    properties:
+      billing_address:
+        type: string
+        x-nullable: true
+      contact_person:
+        type: string
+        x-nullable: true
+      customer_code:
+        type: string
+      email:
+        type: string
+        x-nullable: true
+      name:
+        type: string
+      phone:
+        type: string
+        x-nullable: true
+      shipping_address:
+        type: string
+        x-nullable: true
+      tax_number:
+        type: string
+        x-nullable: true
+    required:
+    - customer_code
+    - name
+    type: object
+  handlers.salesOrderLinePayload:
+    properties:
+      discount_amount:
+        type: string
+      id:
+        format: int64
+        type: integer
+      item_id:
+        format: int64
+        type: integer
+      notes:
+        type: string
+        x-nullable: true
+      qty:
+        format: int64
+        type: integer
+    required:
+    - item_id
+    - qty
+    type: object
+  handlers.salesOrderPayload:
+    properties:
+      branch_id:
+        format: int64
+        type: integer
+      customer_id:
+        format: int64
+        type: integer
+      delivery_address:
+        type: string
+        x-nullable: true
+      delivery_date:
+        type: string
+        x-nullable: true
+      discount_amount:
+        type: string
+      lines:
+        items:
+          $ref: '#/definitions/handlers.salesOrderLinePayload'
+        type: array
+      notes:
+        type: string
+        x-nullable: true
+      so_date:
+        type: string
+    required:
+    - branch_id
+    - customer_id
+    - so_date
+    - lines
+    type: object
+  handlers.customerStatusPayload:
+    properties:
+      is_active:
+        type: boolean
+    required:
+    - is_active
+    type: object
 info:
   contact: {}
-  description: ERP API untuk master item, supplier, purchasing, dan inventory. Endpoint
-    /api memakai token Laravel POS.
+  description: ERP API for master items, customers, purchasing, inventory, and B2B sales orders. Routes under /api validate the Laravel POS token.
   title: ERP API
   version: 1.0.0
 paths:
+  /api/customers:
+    get:
+      parameters:
+      - description: Search by customer code, name, tax number, or contact
+        in: query
+        name: search
+        type: string
+      - description: active or inactive
+        in: query
+        name: status
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: Customer list
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List company customers
+      tags:
+      - Customers
+    post:
+      parameters:
+      - in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.customerPayload'
+      responses:
+        "201":
+          description: Customer created
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create customer
+      tags:
+      - Customers
+  /api/customers/{id}:
+    get:
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Customer detail
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get customer
+      tags:
+      - Customers
+    put:
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: integer
+      - in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.customerPayload'
+      responses:
+        "200":
+          description: Customer updated
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update customer
+      tags:
+      - Customers
+  /api/customers/{id}/status:
+    patch:
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: integer
+      - in: body
+        name: status
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.customerStatusPayload'
+      responses:
+        "200":
+          description: Customer status updated
+      security:
+      - BearerAuth: []
+      summary: Activate or deactivate customer
+      tags:
+      - Customers
+  /api/sales-orders:
+    get:
+      parameters:
+      - description: Search by SO number, customer, or branch
+        in: query
+        name: search
+        type: string
+      - description: open, partially_delivered, delivered, or cancelled
+        in: query
+        name: status
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: Sales order list
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List sales orders
+      tags:
+      - Sales Orders
+    post:
+      parameters:
+      - in: body
+        name: salesOrder
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.salesOrderPayload'
+      responses:
+        "201":
+          description: Sales order created
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create sales order
+      tags:
+      - Sales Orders
+  /api/sales-orders/branches:
+    get:
+      responses:
+        "200":
+          description: Branches for the authenticated company
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List sales order branches
+      tags:
+      - Sales Orders
+  /api/sales-orders/{id}:
+    get:
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Sales order detail
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get sales order
+      tags:
+      - Sales Orders
+    put:
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: integer
+      - in: body
+        name: salesOrder
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.salesOrderPayload'
+      responses:
+        "200":
+          description: Sales order updated
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update an open sales order
+      tags:
+      - Sales Orders
+  /api/sales-orders/{id}/cancel:
+    patch:
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Sales order cancelled
+      security:
+      - BearerAuth: []
+      summary: Cancel sales order
+      tags:
+      - Sales Orders
   /api/good-receipts:
     get:
       parameters:
@@ -1024,7 +1329,7 @@ paths:
       - Suppliers
 securityDefinitions:
   BearerAuth:
-    description: 'Gunakan format: Bearer <token>'
+    description: 'Use format: Bearer <token>'
     in: header
     name: Authorization
     type: apiKey

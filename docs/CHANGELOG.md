@@ -18,5 +18,8 @@ Dokumen ini diperbarui terus selama manual testing dan pengembangan. Jangan buat
 - Memindahkan tampilan saldo dari Master Item ke modul Stock.
 - Menambahkan dokumentasi Swagger awal dari anotasi Go.
 - Menambahkan halaman Swagger UI pada web ERP (`/api-docs`) dengan Try it out.
+- Menambahkan master Customer B2B per company dengan kode unik, alamat billing/shipping, status aktif, dan arsip nonaktif.
+- Menambahkan MVP Sales Order B2B dengan harga snapshot dari `items.selling_price`, diskon per baris dan dokumen, serta status open/cancelled dan status pengiriman untuk integrasi Goods Delivery berikutnya.
+- Menambahkan perubahan Sales Order hanya saat status open; pembatalan tidak mengubah stok. Goods Delivery belum menjadi bagian implementasi ini.
 
 Catat fitur yang selesai, perubahan perilaku, dan batasan yang relevan di bawah entri versi ini.

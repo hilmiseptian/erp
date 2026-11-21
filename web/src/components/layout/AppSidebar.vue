@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { LayoutDashboard, Truck, Package, X, Boxes, Tags, BookOpen } from "lucide-vue-next";
+import { LayoutDashboard, Truck, Package, X, Boxes, Tags, BookOpen, ShoppingCart } from "lucide-vue-next";
 import { Building2 } from "lucide-vue-next";
 import { useAuthStore } from "@/stores/auth";
 
@@ -39,6 +39,15 @@ const menuItems = [
     path: "/suppliers",
     icon: Truck,
     active: true,
+  },
+  {
+    label: "Sales",
+    icon: ShoppingCart,
+    active: true,
+    children: [
+      { label: "Customers", path: "/sales/customers" },
+      { label: "Sales Orders", path: "/sales/orders" },
+    ],
   },
   {
     label: "API Docs",

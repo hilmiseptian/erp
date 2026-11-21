@@ -13,12 +13,12 @@ import (
 
 // @title ERP API
 // @version 1.0.0
-// @description ERP API for item, supplier, purchasing, and inventory workflows. Endpoints under /api use the Laravel POS token.
+// @description ERP API for master data, purchasing, inventory, and B2B sales orders. Endpoints under /api use the Laravel POS token.
 // @BasePath /
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
-// @description Gunakan format: Bearer <token>
+// @description Use format: Bearer <token>
 func main() {
 	cfg := config.LoadConfig()
 

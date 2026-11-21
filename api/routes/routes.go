@@ -29,6 +29,31 @@ func SetupRoutes(router *gin.Engine, cfg config.Config, db *sql.DB) {
 	api.Use(middleware.AuthMiddleware(cfg.LaravelAPIURL))
 
 	api.GET("/me", handlers.Me)
+	customerRepository := repositories.NewCustomerRepository(db)
+	customerService := services.NewCustomerService(customerRepository)
+	customerHandler := handlers.NewCustomerHandler(customerService)
+	customers := api.Group("/customers")
+	{
+		customers.GET("", customerHandler.List)
+		customers.GET("/:id", customerHandler.Get)
+		customers.POST("", customerHandler.Create)
+		customers.PUT("/:id", customerHandler.Update)
+		customers.PATCH("/:id/status", customerHandler.SetActive)
+	}
+
+	salesOrderRepository := repositories.NewSalesOrderRepository(db)
+	salesOrderService := services.NewSalesOrderService(salesOrderRepository)
+	salesOrderHandler := handlers.NewSalesOrderHandler(salesOrderService)
+	salesOrders := api.Group("/sales-orders")
+	{
+		salesOrders.GET("/branches", salesOrderHandler.Branches)
+		salesOrders.GET("", salesOrderHandler.List)
+		salesOrders.GET("/:id", salesOrderHandler.Get)
+		salesOrders.POST("", salesOrderHandler.Create)
+		salesOrders.PUT("/:id", salesOrderHandler.Update)
+		salesOrders.PATCH("/:id/cancel", salesOrderHandler.Cancel)
+	}
+
 	itemRepository := repositories.NewItemRepository(db)
 	itemService := services.NewItemService(itemRepository)
 	itemHandler := handlers.NewItemHandler(itemService)

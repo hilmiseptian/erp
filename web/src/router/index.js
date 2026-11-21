@@ -13,6 +13,8 @@ import GoodReceiptView from '@/views/purchasing/GoodReceiptView.vue'
 import StockView from '@/views/inventory/StockView.vue'
 import StockAdjustmentView from '@/views/inventory/StockAdjustmentView.vue'
 import SwaggerView from '@/views/SwaggerView.vue'
+import CustomerListView from '@/views/customers/CustomerListView.vue'
+import SalesOrderView from '@/views/sales/SalesOrderView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -58,6 +60,18 @@ const router = createRouter({
           meta: {
             title: 'Suppliers',
           },
+        },
+        {
+          path: 'sales/customers',
+          name: 'customers',
+          component: CustomerListView,
+          meta: { title: 'Customers' },
+        },
+        {
+          path: 'sales/orders',
+          name: 'sales-orders',
+          component: SalesOrderView,
+          meta: { title: 'Sales Orders' },
         },
         {
           path: 'inventory/purchase-requests',
