@@ -63,6 +63,7 @@ const menuItems = [
       { label: "Purchase Requests", path: "/inventory/purchase-requests" },
       { label: "Purchase Orders", path: "/inventory/purchase-orders" },
       { label: "Good Receipts", path: "/inventory/good-receipts" },
+      { label: "Goods Deliveries", path: "/inventory/goods-deliveries" },
       { label: "Stock", path: "/inventory/stock" },
       { label: "Stock Adjustments", path: "/inventory/stock-adjustments" },
     ],

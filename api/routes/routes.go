@@ -106,6 +106,18 @@ func SetupRoutes(router *gin.Engine, cfg config.Config, db *sql.DB) {
 		goodReceipts.POST("", grHandler.Create)
 	}
 
+	gdRepository := repositories.NewGoodDeliveryRepository(db)
+	gdService := services.NewGoodDeliveryService(gdRepository)
+	gdHandler := handlers.NewGoodDeliveryHandler(gdService)
+	goodDeliveries := api.Group("/good-deliveries")
+	{
+		goodDeliveries.GET("/sources", gdHandler.Sources)
+		goodDeliveries.GET("/sources/:ref_type/:ref_num", gdHandler.Source)
+		goodDeliveries.GET("", gdHandler.List)
+		goodDeliveries.GET("/:id", gdHandler.Get)
+		goodDeliveries.POST("", gdHandler.Create)
+	}
+
 	stockRepository := repositories.NewStockRepository(db)
 	stockService := services.NewStockService(stockRepository)
 	stockHandler := handlers.NewStockHandler(stockService)

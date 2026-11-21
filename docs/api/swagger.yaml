@@ -218,12 +218,147 @@ definitions:
     required:
     - is_active
     type: object
+  handlers.goodDeliveryLineInput:
+    properties:
+      item_id:
+        format: int64
+        type: integer
+      qty:
+        format: int64
+        type: integer
+    required:
+    - item_id
+    - qty
+    type: object
+  handlers.goodDeliveryPayload:
+    properties:
+      gd_date:
+        type: string
+      lines:
+        items:
+          $ref: '#/definitions/handlers.goodDeliveryLineInput'
+        type: array
+      ref_num:
+        type: string
+      ref_type:
+        enum:
+        - sales_order
+        type: string
+    required:
+    - ref_type
+    - ref_num
+    - gd_date
+    - lines
+    type: object
 info:
   contact: {}
   description: ERP API for master items, customers, purchasing, inventory, and B2B sales orders. Routes under /api validate the Laravel POS token.
   title: ERP API
   version: 1.0.0
 paths:
+  /api/good-deliveries:
+    get:
+      parameters:
+      - description: GD number, source number, or branch
+        in: query
+        name: search
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: Posted goods deliveries
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List goods deliveries
+      tags:
+      - Goods Deliveries
+    post:
+      parameters:
+      - in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.goodDeliveryPayload'
+      responses:
+        "201":
+          description: Goods delivery posted and stock updated
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Post a goods delivery
+      tags:
+      - Goods Deliveries
+  /api/good-deliveries/sources:
+    get:
+      parameters:
+      - description: Currently sales_order
+        in: query
+        name: ref_type
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Available source documents
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List goods delivery sources
+      tags:
+      - Goods Deliveries
+  /api/good-deliveries/sources/{ref_type}/{ref_num}:
+    get:
+      parameters:
+      - description: Currently sales_order
+        in: path
+        name: ref_type
+        required: true
+        type: string
+      - description: Source document number
+        in: path
+        name: ref_num
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Remaining quantities by item
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get remaining source quantities
+      tags:
+      - Goods Deliveries
+  /api/good-deliveries/{id}:
+    get:
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Goods delivery and detail lines
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get goods delivery details
+      tags:
+      - Goods Deliveries
   /api/customers:
     get:
       parameters:

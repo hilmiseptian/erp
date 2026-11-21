@@ -21,5 +21,6 @@ Dokumen ini diperbarui terus selama manual testing dan pengembangan. Jangan buat
 - Menambahkan master Customer B2B per company dengan kode unik, alamat billing/shipping, status aktif, dan arsip nonaktif.
 - Menambahkan MVP Sales Order B2B dengan harga snapshot dari `items.selling_price`, diskon per baris dan dokumen, serta status open/cancelled dan status pengiriman untuk integrasi Goods Delivery berikutnya.
 - Menambahkan perubahan Sales Order hanya saat status open; pembatalan tidak mengubah stok. Goods Delivery belum menjadi bagian implementasi ini.
+- Menambahkan MVP Goods Delivery parsial dari satu Sales Order per dokumen, dengan `ref_type` dan `ref_num` generik untuk sumber transaksi mendatang; posting atomik mengurangi saldo branch, mencatat stock card memakai HPP rata-rata POS, dan memperbarui status Sales Order.
 
 Catat fitur yang selesai, perubahan perilaku, dan batasan yang relevan di bawah entri versi ini.
