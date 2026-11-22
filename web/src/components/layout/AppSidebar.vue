@@ -1,7 +1,24 @@
 <script setup>
+import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { LayoutDashboard, Truck, Package, X, Boxes, Tags, BookOpen, ShoppingCart } from "lucide-vue-next";
-import { Building2 } from "lucide-vue-next";
+import {
+  BookOpen,
+  Boxes,
+  Building2,
+  ChevronDown,
+  ClipboardCheck,
+  ClipboardList,
+  Code2,
+  LayoutDashboard,
+  Package,
+  PackageCheck,
+  ShoppingCart,
+  SlidersHorizontal,
+  Tags,
+  Truck,
+  Users,
+  X,
+} from "lucide-vue-next";
 import { useAuthStore } from "@/stores/auth";
 
 const auth = useAuthStore();
@@ -21,58 +38,74 @@ const emit = defineEmits(["close-mobile"]);
 
 const route = useRoute();
 
-const menuItems = [
+const dashboard = {
+  label: "Dashboard",
+  path: "/dashboard",
+  icon: LayoutDashboard,
+};
+
+const menuGroups = [
   {
-    label: "Dashboard",
-    path: "/dashboard",
-    icon: LayoutDashboard,
-    active: true,
-  },
-  {
-    label: "Items",
-    path: "/items",
+    label: "Master",
     icon: Tags,
-    active: true,
-  },
-  {
-    label: "Suppliers",
-    path: "/suppliers",
-    icon: Truck,
-    active: true,
-  },
-  {
-    label: "Sales",
-    icon: ShoppingCart,
-    active: true,
     children: [
-      { label: "Customers", path: "/sales/customers" },
-      { label: "Sales Orders", path: "/sales/orders" },
+      { label: "Items", path: "/items", icon: Boxes },
+      { label: "Suppliers", path: "/suppliers", icon: Truck },
+      { label: "Customers", path: "/sales/customers", icon: Users },
     ],
   },
   {
-    label: "API Docs",
-    path: "/api-docs",
-    icon: BookOpen,
-    active: true,
+    label: "Purchasing",
+    icon: ClipboardList,
+    children: [
+      { label: "Purchase Requests", path: "/inventory/purchase-requests", icon: ClipboardList },
+      { label: "Purchase Orders", path: "/inventory/purchase-orders", icon: ClipboardCheck },
+      { label: "Good Receipts", path: "/inventory/good-receipts", icon: PackageCheck },
+      { label: "Goods Deliveries", path: "/inventory/goods-deliveries", icon: Truck },
+    ],
   },
   {
     label: "Inventory",
     icon: Package,
-    active: true,
     children: [
-      { label: "Purchase Requests", path: "/inventory/purchase-requests" },
-      { label: "Purchase Orders", path: "/inventory/purchase-orders" },
-      { label: "Good Receipts", path: "/inventory/good-receipts" },
-      { label: "Goods Deliveries", path: "/inventory/goods-deliveries" },
-      { label: "Stock", path: "/inventory/stock" },
-      { label: "Stock Adjustments", path: "/inventory/stock-adjustments" },
+      { label: "Stock", path: "/inventory/stock", icon: Boxes },
+      { label: "Stock Adjustments", path: "/inventory/stock-adjustments", icon: SlidersHorizontal },
+    ],
+  },
+  {
+    label: "Sales",
+    icon: ShoppingCart,
+    children: [
+      { label: "Sales Orders", path: "/sales/orders", icon: ClipboardCheck },
+    ],
+  },
+  {
+    label: "Dev Tools",
+    icon: Code2,
+    children: [
+      { label: "API Docs", path: "/api-docs", icon: BookOpen },
     ],
   },
 ];
 
+const expandedGroups = ref({});
+
 function isActive(path) {
-  return path && route.path === path;
+  return route.path === path;
 }
+
+function syncGroupState(label, event) {
+  expandedGroups.value[label] = event.currentTarget.open;
+}
+
+watch(
+  () => route.path,
+  (path) => {
+    const activeGroup = menuGroups.find((group) => group.children.some((child) => child.path === path));
+    if (activeGroup) expandedGroups.value[activeGroup.label] = true;
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -135,7 +168,7 @@ function isActive(path) {
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-5">
+    <nav aria-label="Main navigation" class="flex-1 space-y-1 overflow-y-auto px-3 py-5">
       <p
         v-if="!collapsed || mobileOpen"
         class="mb-3 px-3 text-xs font-semibold uppercase tracking-wider text-slate-500"
@@ -143,50 +176,66 @@ function isActive(path) {
         Main Menu
       </p>
 
-      <template v-for="item in menuItems" :key="item.label">
-        <div v-if="item.children && item.active" class="space-y-1">
-          <div class="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-400" :class="collapsed && !mobileOpen ? 'justify-center' : ''">
-            <component :is="item.icon" :size="20" />
-            <span v-if="!collapsed || mobileOpen">{{ item.label }}</span>
-          </div>
-          <RouterLink v-for="child in item.children" :key="child.path" :to="child.path" @click="emit('close-mobile')" class="block rounded-lg py-2 pl-11 pr-3 text-sm transition-colors" :class="route.path === child.path ? 'bg-blue-600/20 text-blue-300' : 'text-slate-500 hover:bg-slate-800 hover:text-white'" :title="collapsed && !mobileOpen ? child.label : undefined">
+      <RouterLink
+        :to="dashboard.path"
+        @click="emit('close-mobile')"
+        class="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors"
+        :class="[
+          isActive(dashboard.path)
+            ? 'bg-blue-600 text-white'
+            : 'text-slate-400 hover:bg-slate-800 hover:text-white',
+          collapsed && !mobileOpen ? 'justify-center' : '',
+        ]"
+        :title="collapsed && !mobileOpen ? dashboard.label : undefined"
+      >
+        <component :is="dashboard.icon" :size="20" aria-hidden="true" />
+        <span v-if="!collapsed || mobileOpen">{{ dashboard.label }}</span>
+      </RouterLink>
+
+      <details
+        v-for="group in menuGroups"
+        :key="group.label"
+        :open="expandedGroups[group.label] || false"
+        class="group/menu"
+        @toggle="syncGroupState(group.label, $event)"
+      >
+        <summary
+          :aria-label="group.label"
+          :title="collapsed && !mobileOpen ? group.label : undefined"
+          class="flex min-h-11 cursor-pointer list-none items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-800 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400 [&::-webkit-details-marker]:hidden"
+          :class="collapsed && !mobileOpen ? 'justify-center' : ''"
+        >
+          <component :is="group.icon" :size="20" aria-hidden="true" />
+          <span v-if="!collapsed || mobileOpen" class="flex-1">{{ group.label }}</span>
+          <ChevronDown
+            v-if="!collapsed || mobileOpen"
+            :size="16"
+            aria-hidden="true"
+            class="transition-transform"
+            :class="expandedGroups[group.label] ? 'rotate-180' : ''"
+          />
+        </summary>
+
+        <div class="mt-1 space-y-1">
+          <RouterLink
+            v-for="child in group.children"
+            :key="child.path"
+            :to="child.path"
+            @click="emit('close-mobile')"
+            class="flex min-h-10 items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"
+            :class="[
+              isActive(child.path)
+                ? 'bg-blue-600/20 text-blue-300'
+                : 'text-slate-500 hover:bg-slate-800 hover:text-white',
+              collapsed && !mobileOpen ? 'justify-center' : 'pl-11',
+            ]"
+            :title="collapsed && !mobileOpen ? child.label : undefined"
+          >
+            <component :is="child.icon" :size="18" aria-hidden="true" />
             <span v-if="!collapsed || mobileOpen">{{ child.label }}</span>
           </RouterLink>
         </div>
-        <RouterLink
-          v-else-if="item.active"
-          :to="item.path"
-          @click="emit('close-mobile')"
-          class="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors"
-          :class="[
-            isActive(item.path)
-              ? 'bg-blue-600 text-white'
-              : 'text-slate-400 hover:bg-slate-800 hover:text-white',
-            collapsed && !mobileOpen ? 'justify-center' : '',
-          ]"
-          :title="collapsed && !mobileOpen ? item.label : undefined"
-        >
-          <component :is="item.icon" :size="20" />
-
-          <span v-if="!collapsed || mobileOpen">
-            {{ item.label }}
-          </span>
-        </RouterLink>
-
-        <div
-          v-else
-          class="flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-3 text-sm text-slate-600"
-          :class="collapsed && !mobileOpen ? 'justify-center' : ''"
-          :title="collapsed && !mobileOpen ? `${item.label} (Coming soon)` : undefined"
-        >
-          <component :is="item.icon" :size="20" />
-
-          <span v-if="!collapsed || mobileOpen">
-            {{ item.label }}
-            <span class="ml-1 text-xs">(Soon)</span>
-          </span>
-        </div>
-      </template>
+      </details>
     </nav>
 
     <!-- Sidebar footer -->
