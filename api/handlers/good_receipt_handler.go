@@ -172,6 +172,7 @@ func grError(c *gin.Context, err error) {
 	case errors.Is(err, repositories.ErrGoodReceiptSource):
 		c.JSON(409, gin.H{"message": err.Error()})
 	default:
+		_ = c.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
 	}
 }

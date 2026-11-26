@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -43,6 +44,7 @@ func AuthMiddleware(laravelAPIURL string) gin.HandlerFunc {
 		)
 
 		if err != nil {
+			_ = c.Error(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
@@ -53,6 +55,7 @@ func AuthMiddleware(laravelAPIURL string) gin.HandlerFunc {
 		resp, err := client.Do(req)
 
 		if err != nil {
+			_ = c.Error(fmt.Errorf("authentication service request failed: %w", err))
 			c.AbortWithStatusJSON(http.StatusServiceUnavailable, gin.H{
 				"message": "Authentication service unavailable",
 			})
@@ -70,6 +73,7 @@ func AuthMiddleware(laravelAPIURL string) gin.HandlerFunc {
 		}
 
 		if resp.StatusCode != http.StatusOK {
+			_ = c.Error(fmt.Errorf("authentication service returned HTTP status %d", resp.StatusCode))
 			c.AbortWithStatusJSON(http.StatusBadGateway, gin.H{
 				"message": "Unable to validate authentication",
 			})
@@ -79,6 +83,7 @@ func AuthMiddleware(laravelAPIURL string) gin.HandlerFunc {
 		var user AuthUser
 
 		if err := json.NewDecoder(resp.Body).Decode(&user); err != nil {
+			_ = c.Error(fmt.Errorf("decode authentication service response: %w", err))
 			c.AbortWithStatusJSON(http.StatusBadGateway, gin.H{
 				"message": "Invalid authentication response",
 			})

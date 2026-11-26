@@ -16,6 +16,7 @@ import SwaggerView from '@/views/SwaggerView.vue'
 import CustomerListView from '@/views/customers/CustomerListView.vue'
 import SalesOrderView from '@/views/sales/SalesOrderView.vue'
 import GoodDeliveryView from '@/views/inventory/GoodDeliveryView.vue'
+import StockTransferView from '@/views/inventory/StockTransferView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -103,6 +104,12 @@ const router = createRouter({
           name: 'stock',
           component: StockView,
           meta: { title: 'Stock' },
+        },
+        {
+          path: 'inventory/stock-transfers',
+          name: 'stock-transfers',
+          component: StockTransferView,
+          meta: { title: 'Stock Transfers' },
         },
         {
           path: 'inventory/stock-adjustments',

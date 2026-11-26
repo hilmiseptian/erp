@@ -231,6 +231,7 @@ func prError(c *gin.Context, err error) {
 	case errors.Is(err, services.ErrPRLocked):
 		c.JSON(409, gin.H{"message": err.Error()})
 	default:
+		_ = c.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
 	}
 }

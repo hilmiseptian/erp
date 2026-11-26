@@ -80,6 +80,7 @@ func (h *ItemHandler) List(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{"data": items, "pagination": gin.H{"page": page, "limit": limit, "total": total, "total_pages": (total + limit - 1) / limit}})
 }
+
 // Categories lists active categories available to the company.
 // @Summary List item categories
 // @Tags Items
@@ -94,6 +95,7 @@ func (h *ItemHandler) Categories(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{"data": items})
 }
+
 // Get returns one item in the authenticated company.
 // @Summary Get item
 // @Tags Items
@@ -114,6 +116,7 @@ func (h *ItemHandler) Get(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{"data": item})
 }
+
 // Create adds an item with zero opening stock.
 // @Summary Create item
 // @Tags Items
@@ -134,6 +137,7 @@ func (h *ItemHandler) Create(c *gin.Context) {
 	}
 	c.JSON(201, gin.H{"message": "Item created successfully"})
 }
+
 // Update changes item master data without changing stock.
 // @Summary Update item
 // @Tags Items
@@ -159,6 +163,7 @@ func (h *ItemHandler) Update(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{"message": "Item updated successfully"})
 }
+
 // SetActive changes item availability without deleting its history.
 // @Summary Set item status
 // @Tags Items
@@ -202,6 +207,7 @@ func itemError(c *gin.Context, err error) {
 	case errors.Is(err, services.ErrItemInvalid):
 		c.JSON(422, gin.H{"message": err.Error()})
 	default:
+		_ = c.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
 	}
 }

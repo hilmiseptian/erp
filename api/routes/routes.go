@@ -141,6 +141,22 @@ func SetupRoutes(router *gin.Engine, cfg config.Config, db *sql.DB) {
 		stockAdjustments.PATCH("/:id/cancel", stockAdjustmentHandler.Cancel)
 	}
 
+	stockTransferRepository := repositories.NewStockTransferRepository(db)
+	stockTransferService := services.NewStockTransferService(stockTransferRepository)
+	stockTransferHandler := handlers.NewStockTransferHandler(stockTransferService)
+	stockTransfers := api.Group("/stock-transfers")
+	{
+		stockTransfers.GET("/branches", stockTransferHandler.Branches)
+		stockTransfers.GET("/items", stockTransferHandler.Items)
+		stockTransfers.GET("", stockTransferHandler.List)
+		stockTransfers.GET("/:id", stockTransferHandler.Get)
+		stockTransfers.POST("", stockTransferHandler.Create)
+		stockTransfers.PUT("/:id", stockTransferHandler.Update)
+		stockTransfers.POST("/:id/dispatches", stockTransferHandler.Dispatch)
+		stockTransfers.POST("/:id/receipts", stockTransferHandler.Receive)
+		stockTransfers.PATCH("/:id/cancel", stockTransferHandler.Cancel)
+	}
+
 	// Supplier routes
 	suppliers := api.Group("/suppliers")
 	{

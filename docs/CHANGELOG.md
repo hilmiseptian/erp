@@ -22,5 +22,7 @@ Dokumen ini diperbarui terus selama manual testing dan pengembangan. Jangan buat
 - Menambahkan MVP Sales Order B2B dengan harga snapshot dari `items.selling_price`, diskon per baris dan dokumen, serta status open/cancelled dan status pengiriman untuk integrasi Goods Delivery berikutnya.
 - Menambahkan perubahan Sales Order hanya saat status open; pembatalan tidak mengubah stok. Goods Delivery belum menjadi bagian implementasi ini.
 - Menambahkan MVP Goods Delivery parsial dari satu Sales Order per dokumen, dengan `ref_type` dan `ref_num` generik untuk sumber transaksi mendatang; posting atomik mengurangi saldo branch, mencatat stock card memakai HPP rata-rata POS, dan memperbarui status Sales Order.
+- Menambahkan logging terstruktur `log/slog` untuk request API dan error server; log JSON memuat request ID serta payload JSON terbatas yang disamarkan, tanpa menyimpan log ke `branch_event`.
+- Menambahkan MVP Stock Transfer dengan dispatch parsial melalui Goods Delivery, receipt parsial per GD, validasi kuantitas dan saldo sumber secara atomik, serta HPP asal yang dipertahankan saat penerimaan tujuan. Migration disimpan di repo POS dan belum dijalankan.
 
 Catat fitur yang selesai, perubahan perilaku, dan batasan yang relevan di bawah entri versi ini.

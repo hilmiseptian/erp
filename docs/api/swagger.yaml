@@ -250,6 +250,72 @@ definitions:
     - gd_date
     - lines
     type: object
+  handlers.stockTransferLinePayload:
+    properties:
+      item_id:
+        format: int64
+        type: integer
+      qty:
+        format: int64
+        type: integer
+    required:
+    - item_id
+    - qty
+    type: object
+  handlers.stockTransferPayload:
+    properties:
+      from_branch_id:
+        format: int64
+        type: integer
+      to_branch_id:
+        format: int64
+        type: integer
+      transfer_date:
+        type: string
+      notes:
+        type: string
+        x-nullable: true
+      lines:
+        items:
+          $ref: '#/definitions/handlers.stockTransferLinePayload'
+        type: array
+    required:
+    - from_branch_id
+    - to_branch_id
+    - transfer_date
+    - lines
+    type: object
+  handlers.stockTransferMovementPayload:
+    properties:
+      gd_header_id:
+        format: int64
+        type: integer
+      date:
+        type: string
+      lines:
+        items:
+          $ref: '#/definitions/handlers.stockTransferLinePayload'
+        type: array
+    required:
+    - date
+    - lines
+    type: object
+  handlers.stockTransferReceiptPayload:
+    properties:
+      gd_header_id:
+        format: int64
+        type: integer
+      date:
+        type: string
+      lines:
+        items:
+          $ref: '#/definitions/handlers.stockTransferLinePayload'
+        type: array
+    required:
+    - gd_header_id
+    - date
+    - lines
+    type: object
 info:
   contact: {}
   description: ERP API for master items, customers, purchasing, inventory, and B2B sales orders. Routes under /api validate the Laravel POS token.
@@ -872,6 +938,203 @@ paths:
       summary: Post a stock adjustment
       tags:
       - Stock Adjustments
+  /api/stock-transfers:
+    get:
+      parameters:
+      - description: draft, in_progress, completed, or cancelled
+        in: query
+        name: status
+        type: string
+      - description: Transfer number or branch name
+        in: query
+        name: search
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List stock transfers
+      tags:
+      - Stock Transfers
+    post:
+      parameters:
+      - description: Stock transfer details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.stockTransferPayload'
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a stock transfer draft
+      tags:
+      - Stock Transfers
+  /api/stock-transfers/branches:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List branches available for stock transfer
+      tags:
+      - Stock Transfers
+  /api/stock-transfers/items:
+    get:
+      parameters:
+      - description: Source branch ID
+        in: query
+        name: branch_id
+        required: true
+        type: integer
+      - description: Item SKU or name
+        in: query
+        name: search
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List stocked items for a source branch
+      tags:
+      - Stock Transfers
+  /api/stock-transfers/{id}:
+    get:
+      parameters:
+      - description: Stock transfer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get stock transfer and movement quantities
+      tags:
+      - Stock Transfers
+    put:
+      parameters:
+      - description: Stock transfer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Stock transfer details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.stockTransferPayload'
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update a stock transfer draft
+      tags:
+      - Stock Transfers
+  /api/stock-transfers/{id}/cancel:
+    patch:
+      parameters:
+      - description: Stock transfer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Cancel a stock transfer draft
+      tags:
+      - Stock Transfers
+  /api/stock-transfers/{id}/dispatches:
+    post:
+      parameters:
+      - description: Stock transfer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dispatch quantities
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.stockTransferMovementPayload'
+      responses:
+        "201":
+          description: Dispatch posted
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Dispatch part of a stock transfer
+      tags:
+      - Stock Transfers
+  /api/stock-transfers/{id}/receipts:
+    post:
+      parameters:
+      - description: Stock transfer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Receipt quantities and dispatched GD
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.stockTransferReceiptPayload'
+      responses:
+        "201":
+          description: Receipt posted
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Receive part of a stock transfer
+      tags:
+      - Stock Transfers
   /api/stocks/branches:
     get:
       responses:

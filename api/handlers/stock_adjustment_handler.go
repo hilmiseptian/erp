@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -93,7 +92,7 @@ func (h *StockAdjustmentHandler) List(c *gin.Context) {
 	}
 	list, total, err := h.Service.List(user.CompanyID, branchID, status, adjustmentType, c.Query("search"), limit, (page-1)*limit)
 	if err != nil {
-		logStockAdjustmentFailure(c, user.CompanyID, err)
+		_ = c.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to retrieve stock adjustments"})
 		return
 	}
@@ -253,11 +252,7 @@ func stockAdjustmentError(c *gin.Context, err error) {
 		errors.Is(err, repositories.ErrStockInsufficient):
 		c.JSON(http.StatusConflict, gin.H{"message": err.Error()})
 	default:
-		logStockAdjustmentFailure(c, stockAdjustmentUser(c).CompanyID, err)
+		_ = c.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
 	}
-}
-
-func logStockAdjustmentFailure(c *gin.Context, companyID uint64, err error) {
-	log.Printf("stock adjustment API error method=%s route=%s company_id=%d error=%v", c.Request.Method, c.FullPath(), companyID, err)
 }

@@ -68,6 +68,7 @@ const menuGroups = [
     label: "Inventory",
     icon: Package,
     children: [
+      { label: "Stock Transfers", path: "/inventory/stock-transfers", icon: Truck },
       { label: "Stock", path: "/inventory/stock", icon: Boxes },
       { label: "Stock Adjustments", path: "/inventory/stock-adjustments", icon: SlidersHorizontal },
     ],
