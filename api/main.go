@@ -1,13 +1,15 @@
 package main
 
 import (
-	"log"
+	"log/slog"
+	"os"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	"erp-api/config"
+	"erp-api/middleware"
 	"erp-api/routes"
 )
 
@@ -20,19 +22,29 @@ import (
 // @name Authorization
 // @description Use format: Bearer <token>
 func main() {
+	configureLogger()
+	if err := run(); err != nil {
+		slog.Error("ERP API stopped", "error", err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
 	cfg := config.LoadConfig()
 
 	db, err := config.ConnectDatabase(cfg)
 	if err != nil {
-		log.Fatal("Failed to connect database:", err)
+		return err
 	}
 	defer db.Close()
 
-	router := gin.Default()
+	router := gin.New()
+	router.Use(middleware.SlogRequestLogger(), gin.Recovery())
 
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
 			"http://localhost:5173",
+			"http://localhost:5174",
 		},
 		AllowMethods: []string{
 			"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS",
@@ -51,9 +63,12 @@ func main() {
 
 	routes.SetupRoutes(router, cfg, db)
 
-	log.Println("Inventory API running on port:", cfg.AppPort)
+	slog.Info("ERP API listening", "port", cfg.AppPort)
 
-	if err := router.Run(":" + cfg.AppPort); err != nil {
-		log.Fatal(err)
-	}
+	return router.Run(":" + cfg.AppPort)
+}
+
+func configureLogger() {
+	handler := slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo})
+	slog.SetDefault(slog.New(handler).With("service", "erp-api"))
 }
